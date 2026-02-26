@@ -28,5 +28,6 @@ repos:
         # args: ['--allow-multiple-documents']
       - id: end-of-file-fixer
       - id: trailing-whitespace
+        exclude: '^\.gitignore$'
       - id: check-merge-conflict
         exclude: 'CHANGELOG.md'
