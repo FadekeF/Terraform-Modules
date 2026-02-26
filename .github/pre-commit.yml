@@ -1,0 +1,39 @@
+name: Pre-Commit
+
+on:
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    pre-commit:
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+
+          - name: Set up Python
+            uses: actions/setup-python@v4
+            with:
+              python-version: '3.x'
+
+          - name: Install Terraform
+            uses: hashicorp/setup-terraform@v2
+
+          - name: Install Terraform Docs
+            run:  |
+              curl -Lo ./terraform-docs tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.21.0-$(uname)-amd64.tar.gz
+              tar -xzf terraform-docs.tar.gz
+              chmod +x terraform-docs
+              sudo mv terraform-docs /usr/local/bin
+
+          - name: Install TFLint
+            run : |
+              curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+          - name: Install Pre-Commit
+            run: pip install pre-commit==4.5.1
+
+          - name: Run Pre-Commit
+            run: pre-commit run --all-files --verbose --show-diff-on-failure
