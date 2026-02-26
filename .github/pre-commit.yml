@@ -32,7 +32,7 @@ jobs:
             run : |
               curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
-          - name: Install Pre-Commit
+          - name: Install Pre-Commit.
             run: pip install pre-commit==4.5.1
 
           - name: Run Pre-Commit
