@@ -63,7 +63,7 @@ variable "functions" {
     memory_size          = optional(number, 512)
     reserved_concurrency = optional(number)
     role_name            = optional(string, null) # If null, a new role will be created with basic Lambda execution permissions
-    file_name            = optional(string)       # Required if package_type is Zip
+    filename             = optional(string)       # Required if package_type is Zip
     image_uri            = optional(string)       # Required if package_type is Image
     layers               = optional(list(string), [])
     s3_bucket            = optional(string)
@@ -85,8 +85,8 @@ variable "functions" {
   }
 
   validation {
-    condition     = alltrue([for k, v in var.functions : (v.package_type == "Zip" && v.file_name != null) || (v.package_type == "Image" && v.image_uri != null)])
-    error_message = "For package_type \"Zip\", file_name must be provided. For package_type \"Image\", image_uri must be provided."
+    condition     = alltrue([for k, v in var.functions : (v.package_type == "Zip" && v.filename != null) || (v.package_type == "Image" && v.image_uri != null)])
+    error_message = "For package_type \"Zip\", filename must be provided. For package_type \"Image\", image_uri must be provided."
   }
 
   validation {
