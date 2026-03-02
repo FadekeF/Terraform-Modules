@@ -4,10 +4,12 @@ repos:
     hooks:
       - id: terraform_fmt
       - id: terraform_validate
+        exclude: '^modules/.*/examples/'
       - id: terraform_docs
         args:
           - '--args=--lockfile=false'
       - id: terraform_tflint
+        exclude: '^modules/.*/examples/'
         args:
           - '--args=--only=terraform_deprecated_interpolation'
           - '--args=--only=terraform_deprecated_index'
