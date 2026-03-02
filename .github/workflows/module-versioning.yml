@@ -150,3 +150,5 @@ jobs:
 
       - name: Terraform Module Releaser
         uses: techpivot/terraform-module-releaser@v2
+        with:
+            disable-wiki: true
