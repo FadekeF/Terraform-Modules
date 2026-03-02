@@ -36,4 +36,4 @@ jobs:
             run: pip install pre-commit==4.5.1
 
           - name: Run Pre-Commit
-            run: pre-commit run --all-files --verbose --show-diff-on-failure
+            run: pre-commit run --all-files
