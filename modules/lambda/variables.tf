@@ -66,10 +66,9 @@ variable "functions" {
     file_name            = optional(string)       # Required if package_type is Zip
     image_uri            = optional(string)       # Required if package_type is Image
     layers               = optional(list(string), [])
-    code = object({
-      s3_bucket = string
-      s3_key    = string
-    })
+    s3_bucket            = optional(string)
+    s3_key               = optional(string)
+
     environment_variables   = optional(map(string), {})
     event_source_arn        = optional(string)           # ARN of the event source (e.g., SQS queue, SNS topic) to trigger the Lambda function
     event_source_queue_name = optional(string)           # Name of the SQS queue if using SQS as an event source
