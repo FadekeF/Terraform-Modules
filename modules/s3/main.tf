@@ -38,8 +38,8 @@ resource "aws_s3_bucket_policy" "bucket" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "bucket" {
-  for_each = var.enable_lifecycle_rule ? 1 : 0
-  bucket   = aws_s3_bucket.bucket.id
+  count  = var.enable_lifecycle_rule ? 1 : 0
+  bucket = aws_s3_bucket.bucket.id
 
   rule {
     id     = "ExpireObjectsAfter${var.bucket_expiration_days}Days"
@@ -61,8 +61,8 @@ resource "aws_s3_bucket_public_access_block" "bucket" {
 }
 
 resource "aws_s3_bucket_versioning" "bucket" {
-  for_each = var.versioning_enabled ? 1 : 0
-  bucket   = aws_s3_bucket.bucket.id
+  count  = var.versioning_enabled ? 1 : 0
+  bucket = aws_s3_bucket.bucket.id
 
   versioning_configuration {
     status = var.versioning_enabled ? "Enabled" : "Suspended"
