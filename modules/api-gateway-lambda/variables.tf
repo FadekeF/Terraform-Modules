@@ -1,11 +1,11 @@
-variable "organization" {
-  description = "Organization identifier used in naming and Terraform Cloud workspace standardization."
-  type        = string
-  validation {
-    condition     = can(regex("^[a-z0-9-]+$", var.organization))
-    error_message = "organization must contain only lowercase letters, numbers, and hyphens."
-  }
-}
+# variable "organization" {
+#   description = "Organization identifier used in naming and Terraform Cloud workspace standardization."
+#   type        = string
+#   validation {
+#     condition     = can(regex("^[a-z0-9-]+$", var.organization))
+#     error_message = "organization must contain only lowercase letters, numbers, and hyphens."
+#   }
+# }
 variable "project" {
   description = "Project or workload identifier used in naming and Terraform Cloud workspace standardization."
   type        = string
@@ -31,11 +31,11 @@ variable "workspace_name" {
     error_message = "workspace_name must contain only lowercase letters, numbers, and hyphens."
   }
 }
-variable "enforce_workspace_standard" {
-  description = "When true, validates workspace naming against the standard '<organization>-<project>-<environment>'."
-  type        = bool
-  default     = true
-}
+# variable "enforce_workspace_standard" {
+#   description = "When true, validates workspace naming against the standard '<organization>-<project>-<environment>'."
+#   type        = bool
+#   default     = true
+# }
 variable "brand" {
   description = "Identifier for BlueLightCard Brands e.g BLC-UK, BLC-DDS, or BLC-AU. Used in naming and tagging to differentiate resources across brands."
   type        = string
@@ -149,31 +149,31 @@ variable "auto_deploy" {
   type        = bool
   default     = true
 }
-variable "deployment_description" {
-  description = "Optional Description for explicit API Gateway deployments."
-  type        = string
-  default     = null
-}
-variable "deployment_triggers" {
-  description = "Additional Custom Values that should force a new deployment when changed."
-  type        = map(string)
-  default     = {}
-}
+# variable "deployment_description" {
+#   description = "Optional Description for explicit API Gateway deployments."
+#   type        = string
+#   default     = null
+# }
+# variable "deployment_triggers" {
+#   description = "Additional Custom Values that should force a new deployment when changed."
+#   type        = map(string)
+#   default     = {}
+# }
 variable "integration_type" {
   description = "Optional Description for explicit API Gateway deployments."
   type        = string
   default     = "AWS_PROXY"
 }
-variable "base_tags" {
-  description = "Base tags applied to all resources before module standard tags."
-  type        = map(string)
-  default     = {}
-}
-variable "custom_tags" {
-  description = "Additional custom tags merged last to allow controlled overrides."
-  type        = map(string)
-  default     = {}
-}
+# variable "base_tags" {
+#   description = "Base tags applied to all resources before module standard tags."
+#   type        = map(string)
+#   default     = {}
+# }
+# variable "custom_tags" {
+#   description = "Additional custom tags merged last to allow controlled overrides."
+#   type        = map(string)
+#   default     = {}
+# }
 variable "github_repository" {
   description = "Github repository API Gateway is created in"
   type        = string

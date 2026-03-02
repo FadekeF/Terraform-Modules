@@ -30,19 +30,19 @@ resource "aws_apigatewayv2_integration" "this" {
   api_id           = aws_apigatewayv2_api.this.id
   integration_type = var.integration_type
 
-  connection_type           = each.value.connection_type           //"INTERNET"
-  content_handling_strategy = each.value.content_handling_strategy //"CONVERT_TO_TEXT"
+  connection_type           = each.value.connection_type           #"INTERNET"
+  content_handling_strategy = each.value.content_handling_strategy #"CONVERT_TO_TEXT"
   description               = each.value.description
-  integration_method        = each.value.integration_method   //"POST"
-  integration_uri           = each.value.integration_uri      //"arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/${aws_lambda_function.lambda_function.arn}/invocations"
-  passthrough_behavior      = each.value.passthrough_behavior //"WHEN_NO_MATCH"
+  integration_method        = each.value.integration_method   #"POST"
+  integration_uri           = each.value.integration_uri      #"arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/${aws_lambda_function.lambda_function.arn}/invocations"
+  passthrough_behavior      = each.value.passthrough_behavior #"WHEN_NO_MATCH"
 }
 
 resource "aws_apigatewayv2_route" "this" {
   for_each  = var.routes
   api_id    = aws_apigatewayv2_api.this.id
-  route_key = each.value.route_key //"ANY /{proxy+}"
-  target    = each.value.target    //"integrations/${aws_apigatewayv2_integration.this.id}"
+  route_key = each.value.route_key #"ANY /{proxy+}"
+  target    = each.value.target    #"integrations/${aws_apigatewayv2_integration.this.id}"
 
   authorization_type   = each.value.authorization_type
   authorization_scopes = each.value.authorization_scopes

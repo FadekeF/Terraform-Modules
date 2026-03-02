@@ -17,15 +17,15 @@ variable "name" {
     error_message = "name must contain only lowercase letters, numbers, and hyphens."
   }
 }
-variable "organization" {
-  description = "Organization identifier used in naming and Terraform Cloud workspace standardization."
-  type        = string
+# variable "organization" {
+#   description = "Organization identifier used in naming and Terraform Cloud workspace standardization."
+#   type        = string
 
-  validation {
-    condition     = can(regex("^[a-z0-9-]+$", var.organization))
-    error_message = "organization must contain only lowercase letters, numbers, and hyphens."
-  }
-}
+#   validation {
+#     condition     = can(regex("^[a-z0-9-]+$", var.organization))
+#     error_message = "organization must contain only lowercase letters, numbers, and hyphens."
+#   }
+# }
 
 variable "project" {
   description = "Project or workload identifier used in naming and Terraform Cloud workspace standardization."
@@ -46,11 +46,11 @@ variable "environment" {
   }
 }
 
-variable "workspace_name" {
-  description = "Terraform Cloud workspace name. Defaults to the active terraform.workspace."
-  type        = string
-  default     = null
-}
+# variable "workspace_name" {
+#   description = "Terraform Cloud workspace name. Defaults to the active terraform.workspace."
+#   type        = string
+#   default     = null
+# }
 
 variable "functions" {
   description = "Map of Lambda functions to create"
@@ -58,25 +58,25 @@ variable "functions" {
     runtime              = optional(string, "provided.al2")
     architectures        = optional(list(string), ["x86_64"])
     handler              = optional(string, "index.handler")
-    package_type         = optional(string, "Zip") // Zip or Image
+    package_type         = optional(string, "Zip") # Zip or Image
     timeout              = optional(number, 60)
     memory_size          = optional(number, 512)
     reserved_concurrency = optional(number)
-    role_name            = optional(string, null) // If null, a new role will be created with basic Lambda execution permissions
-    file_name            = optional(string)       // Required if package_type is Zip
-    image_uri            = optional(string)       // Required if package_type is Image
+    role_name            = optional(string, null) # If null, a new role will be created with basic Lambda execution permissions
+    file_name            = optional(string)       # Required if package_type is Zip
+    image_uri            = optional(string)       # Required if package_type is Image
     layers               = optional(list(string), [])
     code = object({
       s3_bucket = string
       s3_key    = string
     })
     environment_variables   = optional(map(string), {})
-    event_source_arn        = optional(string)           // ARN of the event source (e.g., SQS queue, SNS topic) to trigger the Lambda function
-    event_source_queue_name = optional(string)           // Name of the SQS queue if using SQS as an event source
-    starting_position       = optional(string, "LATEST") // Starting position for event source mapping (e.g., LATEST, TRIM_HORIZON)
-    batch_size              = optional(number, 1)        // Batch size for event source mapping
-    security_group_ids      = optional(list(string), []) // Security groups for Lambda function when using VPC
-    sqs_variables           = optional(map(string), {})  // Map of variables to pass to the Lambda function when triggered by SQS events
+    event_source_arn        = optional(string)           # ARN of the event source (e.g., SQS queue, SNS topic) to trigger the Lambda function
+    event_source_queue_name = optional(string)           # Name of the SQS queue if using SQS as an event source
+    starting_position       = optional(string, "LATEST") # Starting position for event source mapping (e.g., LATEST, TRIM_HORIZON)
+    batch_size              = optional(number, 1)        # Batch size for event source mapping
+    security_group_ids      = optional(list(string), []) # Security groups for Lambda function when using VPC
+    sqs_variables           = optional(map(string), {})  # Map of variables to pass to the Lambda function when triggered by SQS events
     tags                    = optional(map(string), {})
   }))
 
