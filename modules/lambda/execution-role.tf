@@ -1,5 +1,6 @@
 resource "aws_iam_role" "lambda_function" {
-  name = "${var.environment}-${var.name}-execution-role"
+  for_each = { for function_name, function in var.functions : function_name => function }
+  name     = "${var.environment}-${each.value.name}-${var.brand}-execution-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -22,13 +23,22 @@ resource "aws_iam_role" "lambda_function" {
 
 
 resource "aws_iam_role_policy_attachment" "lambda_function" {
-  role       = aws_iam_role.lambda_function.name
+  for_each   = aws_iam_role.lambda_function
+  role       = each.value.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+# VPC access policy (if VPC is configured)
+resource "aws_iam_role_policy_attachment" "lambda_vpc" {
+  count      = var.vpc_config != null ? 1 : 0
+  role       = aws_iam_role.lambda_function[count.index].name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 resource "aws_iam_role_policy" "lambda_function" {
-  name = "${var.environment}-${var.name}-s3-policy"
-  role = aws_iam_role.lambda_function.id
+  for_each = aws_iam_role.lambda_function
+  name     = "${var.environment}-${each.value.name}-s3-policy"
+  role     = each.value.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

@@ -1,7 +1,8 @@
 resource "aws_lambda_function" "lambda_function" {
+
   for_each = { for function_name, function in var.functions : function_name => function }
 
-  function_name                  = "${var.environment}-${var.name}-${var.brand}"
+  function_name                  = "${var.environment}-${each.value.name}-${var.brand}"
   runtime                        = each.value.package_type == "Zip" ? each.value.runtime : null
   handler                        = each.value.package_type == "Zip" ? each.value.handler : null
   layers                         = each.value.package_type == "Zip" ? each.value.layers : null
@@ -9,7 +10,7 @@ resource "aws_lambda_function" "lambda_function" {
   memory_size                    = each.value.memory_size
   timeout                        = each.value.timeout
   reserved_concurrent_executions = each.value.reserved_concurrency
-  role                           = "arn:aws:iam::${local.account_id}:role/${coalesce(each.value.role_name, aws_iam_role.lambda_function.name)}"
+  role                           = "arn:aws:iam::${local.account_id}:role/${coalesce(each.value.role_name, aws_iam_role.lambda_function[each.key].name)}"
 
   # source_code_hash = each.value.package_type == "Zip" ? data.archive_file[function_name].output_base64sha256 : null
   # filename         = each.value.package_type == "Zip" ? data.archive_file[function_name].output_path : null
@@ -29,4 +30,13 @@ resource "aws_lambda_function" "lambda_function" {
   architectures = each.value.architectures
 
   tags = merge(local.tags, each.value.tags)
+}
+
+
+# Provisioned concurrency (optional)
+resource "aws_lambda_provisioned_concurrency_config" "main" {
+  for_each                          = { for function_name, function in var.functions : function_name => function if function.provisioned_concurrency != null && function.provisioned_concurrency > 0 }
+  function_name                     = aws_lambda_function.lambda_function[each.key].function_name
+  provisioned_concurrent_executions = each.value.provisioned_concurrency
+  qualifier                         = aws_lambda_function.lambda_function[each.key].version
 }
