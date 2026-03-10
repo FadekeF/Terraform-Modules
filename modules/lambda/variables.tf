@@ -8,15 +8,15 @@ variable "brand" {
     error_message = "brand must contain only lowercase letters, numbers, and hyphens."
   }
 }
-variable "name" {
-  description = "Base name for the API Gateway. Used in combination with environment and brand for resource naming."
-  type        = string
+# variable "name" {
+#   description = "Base name for the API Gateway. Used in combination with environment and brand for resource naming."
+#   type        = string
 
-  validation {
-    condition     = can(regex("^[a-z0-9-]+$", var.name))
-    error_message = "name must contain only lowercase letters, numbers, and hyphens."
-  }
-}
+#   validation {
+#     condition     = can(regex("^[a-z0-9-]+$", var.name))
+#     error_message = "name must contain only lowercase letters, numbers, and hyphens."
+#   }
+# }
 # variable "organization" {
 #   description = "Organization identifier used in naming and Terraform Cloud workspace standardization."
 #   type        = string
@@ -46,6 +46,21 @@ variable "environment" {
   }
 }
 
+variable "vpc_config" {
+  description = "VPC configuration for Lambda functions. If null, Lambda functions will not be associated with a VPC."
+  type = object({
+    security_group_ids = list(string)
+    subnet_ids         = list(string)
+  })
+  default = null
+}
+
+variable "log_retention_days" {
+  description = "Number of days to retain CloudWatch Logs for Lambda functions. Set to 0 for infinite retention."
+  type        = number
+  default     = 14
+}
+
 # variable "workspace_name" {
 #   description = "Terraform Cloud workspace name. Defaults to the active terraform.workspace."
 #   type        = string
@@ -54,20 +69,23 @@ variable "environment" {
 
 variable "functions" {
   description = "Map of Lambda functions to create"
-  type = map(object({
-    runtime              = optional(string, "provided.al2")
-    architectures        = optional(list(string), ["x86_64"])
-    handler              = optional(string, "index.handler")
-    package_type         = optional(string, "Zip") # Zip or Image
-    timeout              = optional(number, 60)
-    memory_size          = optional(number, 512)
-    reserved_concurrency = optional(number)
-    role_name            = optional(string, null) # If null, a new role will be created with basic Lambda execution permissions
-    filename             = optional(string)       # Required if package_type is Zip
-    image_uri            = optional(string)       # Required if package_type is Image
-    layers               = optional(list(string), [])
-    s3_bucket            = optional(string)
-    s3_key               = optional(string)
+  type = list(object({
+    name                    = string
+    description             = optional(string)
+    runtime                 = optional(string, "nodejs20.x")
+    architectures           = optional(list(string), ["x86_64"])
+    handler                 = optional(string, "index.handler")
+    package_type            = optional(string, "Zip") # Zip or Image
+    timeout                 = optional(number, 60)
+    memory_size             = optional(number, 512)
+    reserved_concurrency    = optional(number)
+    provisioned_concurrency = optional(number)
+    role_name               = optional(string, null) # If null, a new role will be created with basic Lambda execution permissions
+    filename                = optional(string)       # Required if package_type is Zip
+    image_uri               = optional(string)       # Required if package_type is Image
+    layers                  = optional(list(string), [])
+    s3_bucket               = optional(string)
+    s3_key                  = optional(string)
 
     environment_variables   = optional(map(string), {})
     event_source_arn        = optional(string)           # ARN of the event source (e.g., SQS queue, SNS topic) to trigger the Lambda function
