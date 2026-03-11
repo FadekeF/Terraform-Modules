@@ -33,24 +33,43 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_architectures"></a> [architectures](#input\_architectures) | Lambda function architectures | `list(string)` | <pre>[<br/>  "x86_64"<br/>]</pre> | no |
 | <a name="input_brand"></a> [brand](#input\_brand) | Identifier for BlueLightCard Brands e.g BLC-UK, BLC-DDS, or BLC-AU. Used in naming and tagging to differentiate resources across brands. | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment identifier (for example: dev, stage, prod). | `string` | n/a | yes |
-| <a name="input_functions"></a> [functions](#input\_functions) | Map of Lambda functions to create | <pre>list(object({<br/>    name                    = string<br/>    description             = optional(string)<br/>    runtime                 = optional(string, "nodejs20.x")<br/>    architectures           = optional(list(string), ["x86_64"])<br/>    handler                 = optional(string, "index.handler")<br/>    package_type            = optional(string, "Zip") # Zip or Image<br/>    source_code_hash        = optional(string)        # Optional hash to force update when code changes, if not using filename or s3_key<br/>    timeout                 = optional(number, 60)<br/>    memory_size             = optional(number, 512)<br/>    reserved_concurrency    = optional(number)<br/>    provisioned_concurrency = optional(number)<br/>    role_name               = optional(string, null) # If null, a new role will be created with basic Lambda execution permissions<br/>    filename                = optional(string)       # Required if package_type is Zip<br/>    image_uri               = optional(string)       # Required if package_type is Image<br/>    layers                  = optional(list(string), [])<br/>    s3_bucket               = optional(string)<br/>    s3_key                  = optional(string)<br/><br/>    environment_variables   = optional(map(string), {})<br/>    event_source_arn        = optional(string)           # ARN of the event source (e.g., SQS queue, SNS topic) to trigger the Lambda function<br/>    event_source_queue_name = optional(string)           # Name of the SQS queue if using SQS as an event source<br/>    starting_position       = optional(string, "LATEST") # Starting position for event source mapping (e.g., LATEST, TRIM_HORIZON)<br/>    batch_size              = optional(number, 1)        # Batch size for event source mapping<br/>    security_group_ids      = optional(list(string), []) # Security groups for Lambda function when using VPC<br/>    sqs_variables           = optional(map(string), {})  # Map of variables to pass to the Lambda function when triggered by SQS events<br/>    tags                    = optional(map(string), {})<br/>  }))</pre> | n/a | yes |
+| <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Environment variables for the Lambda function | `map(string)` | `{}` | no |
+| <a name="input_filename"></a> [filename](#input\_filename) | Path to the zip file for Lambda function code (required if package\_type is Zip) | `string` | `null` | no |
+| <a name="input_function_description"></a> [function\_description](#input\_function\_description) | Description of the Lambda function | `string` | `null` | no |
+| <a name="input_function_name"></a> [function\_name](#input\_function\_name) | Name of the Lambda function | `string` | n/a | yes |
 | <a name="input_github_repository"></a> [github\_repository](#input\_github\_repository) | Optional GitHub repository URL to include in tags for traceability. | `string` | `null` | no |
+| <a name="input_handler"></a> [handler](#input\_handler) | Lambda function handler | `string` | `"index.handler"` | no |
+| <a name="input_image_uri"></a> [image\_uri](#input\_image\_uri) | ECR image URI for Lambda function (required if package\_type is Image) | `string` | `null` | no |
 | <a name="input_lambda_security_group"></a> [lambda\_security\_group](#input\_lambda\_security\_group) | Security group ID to associate with Lambda functions for VPC access. Optional if Lambda functions do not require VPC access. | `list(string)` | `[]` | no |
+| <a name="input_layers"></a> [layers](#input\_layers) | List of Lambda layer ARNs to attach to the function | `list(string)` | `[]` | no |
 | <a name="input_log_retention_days"></a> [log\_retention\_days](#input\_log\_retention\_days) | Number of days to retain CloudWatch Logs for Lambda functions. Set to 0 for infinite retention. | `number` | `14` | no |
+| <a name="input_memory_size"></a> [memory\_size](#input\_memory\_size) | Memory allocation in MB for the Lambda function | `number` | `512` | no |
+| <a name="input_package_type"></a> [package\_type](#input\_package\_type) | Lambda function package type (Zip or Image) | `string` | `"Zip"` | no |
 | <a name="input_private_subnets"></a> [private\_subnets](#input\_private\_subnets) | List of private subnet IDs for Lambda functions that require VPC access. Optional if Lambda functions do not require VPC access. | `list(string)` | `[]` | no |
 | <a name="input_project"></a> [project](#input\_project) | Project or workload identifier used in naming and Terraform Cloud workspace standardization. | `string` | n/a | yes |
+| <a name="input_provisioned_concurrency"></a> [provisioned\_concurrency](#input\_provisioned\_concurrency) | Provisioned concurrent executions for the Lambda function | `number` | `null` | no |
+| <a name="input_reserved_concurrency"></a> [reserved\_concurrency](#input\_reserved\_concurrency) | Reserved concurrent executions for the Lambda function | `number` | `null` | no |
+| <a name="input_role_name"></a> [role\_name](#input\_role\_name) | IAM role name for the Lambda function. If null, a new role will be created with basic Lambda execution permissions | `string` | `null` | no |
+| <a name="input_runtime"></a> [runtime](#input\_runtime) | Lambda function runtime | `string` | `"nodejs20.x"` | no |
+| <a name="input_s3_bucket"></a> [s3\_bucket](#input\_s3\_bucket) | S3 bucket containing the Lambda function code | `string` | `null` | no |
+| <a name="input_s3_key"></a> [s3\_key](#input\_s3\_key) | S3 key for the Lambda function code | `string` | `null` | no |
+| <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | Security group IDs for Lambda function when using VPC | `list(string)` | `[]` | no |
+| <a name="input_source_code_hash"></a> [source\_code\_hash](#input\_source\_code\_hash) | Hash of the source code to force updates | `string` | `null` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to the Lambda function | `map(string)` | `{}` | no |
+| <a name="input_timeout"></a> [timeout](#input\_timeout) | Timeout in seconds for the Lambda function | `number` | `60` | no |
 | <a name="input_vpc_config"></a> [vpc\_config](#input\_vpc\_config) | VPC configuration for Lambda functions. If null, Lambda functions will not be associated with a VPC. | <pre>object({<br/>    security_group_ids = list(string)<br/>    subnet_ids         = list(string)<br/>  })</pre> | `null` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_lambda_function_arn"></a> [lambda\_function\_arn](#output\_lambda\_function\_arn) | Map of Lambda function names to their ARNs. |
-| <a name="output_lambda_function_name"></a> [lambda\_function\_name](#output\_lambda\_function\_name) | Map of Lambda function names to their actual function names. |
-| <a name="output_lambda_function_qualified_arn"></a> [lambda\_function\_qualified\_arn](#output\_lambda\_function\_qualified\_arn) | Map of Lambda function names to their qualified ARNs (including version). |
-| <a name="output_lambda_function_role_arn"></a> [lambda\_function\_role\_arn](#output\_lambda\_function\_role\_arn) | Map of Lambda function names to their execution role ARNs. |
-| <a name="output_lambda_function_version"></a> [lambda\_function\_version](#output\_lambda\_function\_version) | Map of Lambda function names to their versions. |
-| <a name="output_lambda_function_vpc_config"></a> [lambda\_function\_vpc\_config](#output\_lambda\_function\_vpc\_config) | Map of Lambda function names to their VPC configuration (if applicable). |
+| <a name="output_lambda_function_arn"></a> [lambda\_function\_arn](#output\_lambda\_function\_arn) | ARN of the Lambda function. |
+| <a name="output_lambda_function_name"></a> [lambda\_function\_name](#output\_lambda\_function\_name) | Name of the Lambda function. |
+| <a name="output_lambda_function_qualified_arn"></a> [lambda\_function\_qualified\_arn](#output\_lambda\_function\_qualified\_arn) | Qualified ARN of the Lambda function (including version). |
+| <a name="output_lambda_function_role_arn"></a> [lambda\_function\_role\_arn](#output\_lambda\_function\_role\_arn) | ARN of the Lambda function execution role. |
+| <a name="output_lambda_function_version"></a> [lambda\_function\_version](#output\_lambda\_function\_version) | Version of the Lambda function. |
+| <a name="output_lambda_function_vpc_config"></a> [lambda\_function\_vpc\_config](#output\_lambda\_function\_vpc\_config) | VPC configuration of the Lambda function (if applicable). |
 <!-- END_TF_DOCS -->

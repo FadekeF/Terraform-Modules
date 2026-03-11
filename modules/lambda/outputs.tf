@@ -1,29 +1,29 @@
 output "lambda_function_arn" {
-  description = "Map of Lambda function names to their ARNs."
-  value       = { for name, function in aws_lambda_function.lambda_function : name => function.arn }
+  description = "ARN of the Lambda function."
+  value       = aws_lambda_function.lambda_function.arn
 }
 
 output "lambda_function_name" {
-  description = "Map of Lambda function names to their actual function names."
-  value       = { for name, function in aws_lambda_function.lambda_function : name => function.function_name }
+  description = "Name of the Lambda function."
+  value       = aws_lambda_function.lambda_function.function_name
 }
 
 output "lambda_function_version" {
-  description = "Map of Lambda function names to their versions."
-  value       = { for name, function in aws_lambda_function.lambda_function : name => function.version }
+  description = "Version of the Lambda function."
+  value       = aws_lambda_function.lambda_function.version
 }
 
 output "lambda_function_qualified_arn" {
-  description = "Map of Lambda function names to their qualified ARNs (including version)."
-  value       = { for name, function in aws_lambda_function.lambda_function : name => "${function.arn}:${function.version}" }
+  description = "Qualified ARN of the Lambda function (including version)."
+  value       = "${aws_lambda_function.lambda_function.arn}:${aws_lambda_function.lambda_function.version}"
 }
 
 output "lambda_function_role_arn" {
-  description = "Map of Lambda function names to their execution role ARNs."
-  value       = { for name, function in aws_lambda_function.lambda_function : name => function.role }
+  description = "ARN of the Lambda function execution role."
+  value       = aws_lambda_function.lambda_function.role
 }
 
 output "lambda_function_vpc_config" {
-  description = "Map of Lambda function names to their VPC configuration (if applicable)."
-  value       = { for name, function in aws_lambda_function.lambda_function : name => function.vpc_config }
+  description = "VPC configuration of the Lambda function (if applicable)."
+  value       = aws_lambda_function.lambda_function.vpc_config
 }
