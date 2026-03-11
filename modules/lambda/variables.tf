@@ -76,6 +76,7 @@ variable "functions" {
     architectures           = optional(list(string), ["x86_64"])
     handler                 = optional(string, "index.handler")
     package_type            = optional(string, "Zip") # Zip or Image
+    source_code_hash        = optional(string)        # Optional hash to force update when code changes, if not using filename or s3_key
     timeout                 = optional(number, 60)
     memory_size             = optional(number, 512)
     reserved_concurrency    = optional(number)
