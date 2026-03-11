@@ -1,6 +1,6 @@
 resource "aws_iam_role" "lambda_function" {
   count = var.role_name == null ? 1 : 0
-  name  = "${var.environment}-${var.function_name}-${var.brand}-execution-role"
+  name  = "${var.function_name}-${var.brand}-${var.environment}-execution-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -18,7 +18,7 @@ resource "aws_iam_role" "lambda_function" {
       }
     ]
   })
-  tags = local.tags
+  tags = merge(local.tags, var.tags)
 }
 
 
@@ -37,7 +37,7 @@ resource "aws_iam_role_policy_attachment" "lambda_vpc" {
 
 resource "aws_iam_role_policy" "lambda_function" {
   count = var.role_name == null ? 1 : 0
-  name  = "${var.environment}-${var.function_name}-s3-policy"
+  name  = "${var.function_name}-${var.brand}-${var.environment}-s3-policy"
   role  = aws_iam_role.lambda_function[0].id
   policy = jsonencode({
     Version = "2012-10-17"
