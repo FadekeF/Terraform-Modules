@@ -67,52 +67,163 @@ variable "log_retention_days" {
 #   default     = null
 # }
 
-variable "functions" {
-  description = "Map of Lambda functions to create"
-  type = list(object({
-    name                    = string
-    description             = optional(string)
-    runtime                 = optional(string, "nodejs20.x")
-    architectures           = optional(list(string), ["x86_64"])
-    handler                 = optional(string, "index.handler")
-    package_type            = optional(string, "Zip") # Zip or Image
-    source_code_hash        = optional(string)        # Optional hash to force update when code changes, if not using filename or s3_key
-    timeout                 = optional(number, 60)
-    memory_size             = optional(number, 512)
-    reserved_concurrency    = optional(number)
-    provisioned_concurrency = optional(number)
-    role_name               = optional(string, null) # If null, a new role will be created with basic Lambda execution permissions
-    filename                = optional(string)       # Required if package_type is Zip
-    image_uri               = optional(string)       # Required if package_type is Image
-    layers                  = optional(list(string), [])
-    s3_bucket               = optional(string)
-    s3_key                  = optional(string)
+variable "function_name" {
+  description = "Name of the Lambda function"
+  type        = string
+}
 
-    environment_variables   = optional(map(string), {})
-    event_source_arn        = optional(string)           # ARN of the event source (e.g., SQS queue, SNS topic) to trigger the Lambda function
-    event_source_queue_name = optional(string)           # Name of the SQS queue if using SQS as an event source
-    starting_position       = optional(string, "LATEST") # Starting position for event source mapping (e.g., LATEST, TRIM_HORIZON)
-    batch_size              = optional(number, 1)        # Batch size for event source mapping
-    security_group_ids      = optional(list(string), []) # Security groups for Lambda function when using VPC
-    sqs_variables           = optional(map(string), {})  # Map of variables to pass to the Lambda function when triggered by SQS events
-    tags                    = optional(map(string), {})
-  }))
+variable "function_description" {
+  description = "Description of the Lambda function"
+  type        = string
+  default     = null
+}
+
+variable "runtime" {
+  description = "Lambda function runtime"
+  type        = string
+  default     = "nodejs20.x"
+}
+
+variable "architectures" {
+  description = "Lambda function architectures"
+  type        = list(string)
+  default     = ["x86_64"]
+}
+
+variable "handler" {
+  description = "Lambda function handler"
+  type        = string
+  default     = "index.handler"
+}
+
+variable "package_type" {
+  description = "Lambda function package type (Zip or Image)"
+  type        = string
+  default     = "Zip"
 
   validation {
-    condition     = alltrue([for k, v in var.functions : contains(["Zip", "Image"], v.package_type)])
+    condition     = contains(["Zip", "Image"], var.package_type)
     error_message = "Invalid package_type specified. It must be either \"Zip\" or \"Image\"."
   }
+}
+
+variable "source_code_hash" {
+  description = "Hash of the source code to force updates"
+  type        = string
+  default     = null
+}
+
+variable "timeout" {
+  description = "Timeout in seconds for the Lambda function"
+  type        = number
+  default     = 60
+}
+
+variable "memory_size" {
+  description = "Memory allocation in MB for the Lambda function"
+  type        = number
+  default     = 512
+}
+
+variable "reserved_concurrency" {
+  description = "Reserved concurrent executions for the Lambda function"
+  type        = number
+  default     = null
+}
+
+variable "provisioned_concurrency" {
+  description = "Provisioned concurrent executions for the Lambda function"
+  type        = number
+  default     = null
+}
+
+variable "role_name" {
+  description = "IAM role name for the Lambda function. If null, a new role will be created with basic Lambda execution permissions"
+  type        = string
+  default     = null
 
   validation {
-    condition     = alltrue([for k, v in var.functions : (v.package_type == "Zip" && v.filename != null) || (v.package_type == "Image" && v.image_uri != null)])
-    error_message = "For package_type \"Zip\", filename must be provided. For package_type \"Image\", image_uri must be provided."
-  }
-
-  validation {
-    condition     = alltrue([for k, v in var.functions : v.role_name == null || can(regex("^[a-zA-Z0-9-_]+$", v.role_name))])
+    condition     = var.role_name == null || can(regex("^[a-zA-Z0-9-_]+$", var.role_name))
     error_message = "role_name must contain only letters, numbers, hyphens, and underscores."
   }
+}
 
+variable "filename" {
+  description = "Path to the zip file for Lambda function code (required if package_type is Zip)"
+  type        = string
+  default     = null
+}
+
+variable "image_uri" {
+  description = "ECR image URI for Lambda function (required if package_type is Image)"
+  type        = string
+  default     = null
+}
+
+variable "layers" {
+  description = "List of Lambda layer ARNs to attach to the function"
+  type        = list(string)
+  default     = []
+}
+
+variable "s3_bucket" {
+  description = "S3 bucket containing the Lambda function code"
+  type        = string
+  default     = null
+}
+
+variable "s3_key" {
+  description = "S3 key for the Lambda function code"
+  type        = string
+  default     = null
+}
+
+variable "environment_variables" {
+  description = "Environment variables for the Lambda function"
+  type        = map(string)
+  default     = {}
+}
+
+# variable "event_source_arn" {
+#   description = "ARN of the event source (e.g., SQS queue, SNS topic) to trigger the Lambda function"
+#   type        = string
+#   default     = null
+# }
+
+# variable "event_source_queue_name" {
+#   description = "Name of the SQS queue if using SQS as an event source"
+#   type        = string
+#   default     = null
+# }
+
+# variable "starting_position" {
+#   description = "Starting position for event source mapping (e.g., LATEST, TRIM_HORIZON)"
+#   type        = string
+#   default     = "LATEST"
+# }
+
+# variable "batch_size" {
+#   description = "Batch size for event source mapping"
+#   type        = number
+#   default     = 1
+# }
+
+variable "security_group_ids" {
+  description = "Security group IDs for Lambda function when using VPC"
+  type        = list(string)
+  default     = []
+}
+
+# variable "sqs_variables" {
+#   description = "Map of variables to pass to the Lambda function when triggered by SQS events"
+#   type        = map(string)
+#   default     = {}
+# }
+
+variable "tags" {
+  description = "Tags to apply to the Lambda function"
+  type        = map(string)
+  default     = {}
 }
 
 variable "lambda_security_group" {
