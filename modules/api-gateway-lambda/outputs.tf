@@ -32,7 +32,7 @@ output "route_ids" {
 }
 output "deployment_id" {
   description = "ID of the explicit deployment when create_deployment is enabled and auto_deploy is false"
-  value       = { for key, route in aws_apigatewayv2_route.this : key => route.id }
+  value       = try(aws_apigatewayv2_deployment.this[0].id, null)
 }
 # output "standardized_name" {
 #   description = "Standardized resource name calculated by the module."

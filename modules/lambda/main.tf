@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "lambda_function" {
 
-  function_name                  = "${var.environment}-${var.function_name}-${var.brand}"
+  function_name                  = "${var.function_name}-${var.brand}-${var.environment}"
   description                    = var.function_description
   runtime                        = var.package_type == "Zip" ? var.runtime : null
   handler                        = var.package_type == "Zip" ? var.handler : null

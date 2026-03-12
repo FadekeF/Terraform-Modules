@@ -1,17 +1,18 @@
 resource "aws_apigatewayv2_api" "this" {
-  name                       = "${var.environment}-${var.name}-${var.brand}"
+  name                       = "${var.service_name}-${var.brand}-${var.environment}-api"
   protocol_type              = var.protocol_type
   description                = var.api_description
   route_selection_expression = var.protocol_type == "WEBSOCKET" ? var.route_selection_expression : null
+
   dynamic "cors_configuration" {
     for_each = var.protocol_type == "HTTP" && var.cors_configuration != null ? [var.cors_configuration] : []
     content {
-      allow_credentials = try(cors_configuration.value.allow_credentials, null)
-      allow_headers     = try(cors_configuration.value.allow_headers, null)
-      allow_methods     = try(cors_configuration.value.allow_methods, null)
-      allow_origins     = try(cors_configuration.value.allow_origins, null)
-      expose_headers    = try(cors_configuration.value.expose_headers, null)
-      max_age           = try(cors_configuration.value.max_age, null)
+      allow_credentials = cors_configuration.value.allow_credentials
+      allow_headers     = cors_configuration.value.allow_headers
+      allow_methods     = cors_configuration.value.allow_methods
+      allow_origins     = cors_configuration.value.allow_origins
+      expose_headers    = cors_configuration.value.expose_headers
+      max_age           = cors_configuration.value.max_age
     }
   }
 
@@ -42,7 +43,7 @@ resource "aws_apigatewayv2_route" "this" {
   for_each  = var.routes
   api_id    = aws_apigatewayv2_api.this.id
   route_key = each.value.route_key #"ANY /{proxy+}"
-  target    = each.value.target    #"integrations/${aws_apigatewayv2_integration.this.id}"
+  target    = "integrations/${aws_apigatewayv2_integration.this[each.key].id}"
 
   authorization_type   = each.value.authorization_type
   authorization_scopes = each.value.authorization_scopes
@@ -67,14 +68,16 @@ resource "aws_apigatewayv2_stage" "this" {
     content {
       destination_arn = aws_cloudwatch_log_group.this[0].arn
       format = jsonencode({
-        requestId      = "$context.requestId"
-        ip             = "$context.identity.sourceIp"
-        requestTime    = "$context.requestTime"
-        httpMethod     = "$context.httpMethod"
-        routeKey       = "$context.routeKey"
-        status         = "$context.status"
-        protocol       = "$context.protocol"
-        responseLength = "$context.responseLength"
+        requestId          = "$context.requestId"
+        ip                 = "$context.identity.sourceIp"
+        requestTime        = "$context.requestTime"
+        httpMethod         = "$context.httpMethod"
+        routeKey           = "$context.routeKey"
+        status             = "$context.status"
+        protocol           = "$context.protocol"
+        responseLength     = "$context.responseLength"
+        integrationLatency = "$context.integrationLatency"
+        errorMessage       = "$context.error.message"
       })
     }
   }
@@ -104,16 +107,4 @@ resource "aws_apigatewayv2_deployment" "this" {
   lifecycle {
     create_before_destroy = true
   }
-}
-
-resource "aws_lambda_permission" "this" {
-  for_each      = var.routes
-  statement_id  = "AllowMyDemoAPIInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = "MyDemoFunction"
-  principal     = "apigateway.amazonaws.com"
-
-  # The /* part allows invocation from any stage, method and resource path
-  # within API Gateway.
-  source_arn = "${aws_apigatewayv2_api.this.execution_arn}/*"
 }
