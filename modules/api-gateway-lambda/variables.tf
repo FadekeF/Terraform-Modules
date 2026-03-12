@@ -45,13 +45,13 @@ variable "brand" {
     error_message = "brand must contain only lowercase letters, numbers, and hyphens."
   }
 }
-variable "name" {
+variable "service_name" {
   description = "Base name for the API Gateway. Used in combination with environment and brand for resource naming."
   type        = string
 
   validation {
-    condition     = can(regex("^[a-z0-9-]+$", var.name))
-    error_message = "name must contain only lowercase letters, numbers, and hyphens."
+    condition     = can(regex("^[a-z0-9-]+$", var.service_name))
+    error_message = "service_name must contain only lowercase letters, numbers, and hyphens."
   }
 }
 # variable "name_separator" {
@@ -101,14 +101,14 @@ variable "route_selection_expression" {
 variable "cors_configuration" {
   description = "Optional CORS configuration for HTTP API."
   type = object({
-    allow_credentials = optional(bool)
-    allow_headers     = optional(list(string))
-    allow_methods     = optional(list(string))
-    allow_origins     = optional(list(string))
-    expose_headers    = optional(list(string))
-    max_age           = optional(number)
+    allow_credentials = optional(bool, null)
+    allow_headers     = optional(list(string), null)
+    allow_methods     = optional(list(string), null)
+    allow_origins     = optional(list(string), null)
+    expose_headers    = optional(list(string), null)
+    max_age           = optional(number, null)
   })
-  default = null
+  default = {}
 }
 variable "stage_variables" {
   description = "Map of stage variables."
@@ -116,26 +116,23 @@ variable "stage_variables" {
   default     = {}
 }
 variable "routes" {
-  description = "Map of API routes"
+  description = "Map of API routes with their Lambda integration configuration"
   type = map(object({
-    route_key              = string
-    lambda_function_name   = string
-    lambda_invoke_arn      = string
-    payload_format_version = optional(string, "1.0")
-    timeout_milliseconds   = optional(number)
-    authorization_type     = optional(string)
-    authorizer_id          = optional(string)
-    authorization_scopes   = optional(string)
-    api_key_required       = optional(bool)
-    operation_name         = optional(string)
-    request_models         = optional(map(string))
-    request_parameter      = optional(map(string))
+    route_key            = string
+    lambda_function_name = string
+    integration_uri      = string
+    integration_method   = optional(string, "POST")
 
-    connection_type           = optional(string)
+    authorization_type   = optional(string)
+    authorizer_id        = optional(string)
+    authorization_scopes = optional(string)
+    api_key_required     = optional(bool, false)
+    operation_name       = optional(string)
+    request_models       = optional(map(string))
+
+    connection_type           = optional(string, "INTERNET")
     content_handling_strategy = optional(string)
     description               = optional(string)
-    integration_method        = optional(string)
-    integration_uri           = optional(string)
     passthrough_behavior      = optional(string)
   }))
 }
@@ -177,4 +174,10 @@ variable "integration_type" {
 variable "github_repository" {
   description = "Github repository API Gateway is created in"
   type        = string
+}
+
+variable "allow_api_gateway_invoke_lambda" {
+  description = "Whether to create permissions allowing API Gateway to invoke Lambda functions. Set to false if permissions are managed outside of this module."
+  type        = bool
+  default     = false
 }

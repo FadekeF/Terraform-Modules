@@ -9,7 +9,7 @@ locals {
   create_explicit_deployment = var.create_deployment && !var.auto_deploy
 
   tags = {
-    Name                 = var.name
+    Name                 = var.service_name
     Brand                = var.brand
     service              = var.project
     environment          = var.environment
