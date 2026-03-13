@@ -66,10 +66,11 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_lambda_function_arn"></a> [lambda\_function\_arn](#output\_lambda\_function\_arn) | ARN of the Lambda function. |
-| <a name="output_lambda_function_name"></a> [lambda\_function\_name](#output\_lambda\_function\_name) | Name of the Lambda function. |
-| <a name="output_lambda_function_qualified_arn"></a> [lambda\_function\_qualified\_arn](#output\_lambda\_function\_qualified\_arn) | Qualified ARN of the Lambda function (including version). |
-| <a name="output_lambda_function_role_arn"></a> [lambda\_function\_role\_arn](#output\_lambda\_function\_role\_arn) | ARN of the Lambda function execution role. |
-| <a name="output_lambda_function_version"></a> [lambda\_function\_version](#output\_lambda\_function\_version) | Version of the Lambda function. |
-| <a name="output_lambda_function_vpc_config"></a> [lambda\_function\_vpc\_config](#output\_lambda\_function\_vpc\_config) | VPC configuration of the Lambda function (if applicable). |
+| <a name="output_function_arn"></a> [function\_arn](#output\_function\_arn) | ARN of the Lambda function. |
+| <a name="output_function_invoke_arn"></a> [function\_invoke\_arn](#output\_function\_invoke\_arn) | Invoke ARN of the Lambda function. |
+| <a name="output_function_name"></a> [function\_name](#output\_function\_name) | Name of the Lambda function. |
+| <a name="output_function_qualified_arn"></a> [function\_qualified\_arn](#output\_function\_qualified\_arn) | Qualified ARN of the Lambda function (including version). |
+| <a name="output_function_role_arn"></a> [function\_role\_arn](#output\_function\_role\_arn) | ARN of the Lambda function execution role. |
+| <a name="output_function_version"></a> [function\_version](#output\_function\_version) | Version of the Lambda function. |
+| <a name="output_function_vpc_config"></a> [function\_vpc\_config](#output\_function\_vpc\_config) | VPC configuration of the Lambda function (if applicable). |
 <!-- END_TF_DOCS -->
