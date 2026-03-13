@@ -125,7 +125,7 @@ variable "routes" {
 
     authorization_type   = optional(string)
     authorizer_id        = optional(string)
-    authorization_scopes = optional(string)
+    authorization_scopes = optional(list(string), [])
     api_key_required     = optional(bool, false)
     operation_name       = optional(string)
     request_models       = optional(map(string))
